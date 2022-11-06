@@ -75,3 +75,37 @@ r2d3(data = monsters_caught,
      d3_version = "5")
 ```
 
+
+
+```{r}
+library(shiny)
+library(r2d3)
+
+ui <- fluidPage(
+  inputPanel(
+    sliderInput("bar_max", label = "Max:",
+      min = 0, max = 1, value = 1, step = 0.05)
+  ),
+  d3Output("d3"),
+  verbatimTextOutput('code')
+)
+
+server <- function(input, output) {
+  output$d3 <- renderD3({
+    r2d3(
+      runif(5, 0, input$bar_max),
+      script = system.file("examples/baranims.js", package = "r2d3")
+    )
+  })
+  
+  output$code <- renderText({
+    paste0((readLines(system.file("examples/baranims.js", package = "r2d3"),
+                      warn = FALSE)), collapse = "\n")
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+
